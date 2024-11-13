@@ -1,258 +1,47 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: Sistema de Gestión Bancaria
   description: API para manejar información de clientes, cuentas bancarias, créditos y transacciones.
   version: 1.0.0
-
+tags:
+  - name: customers
+    description: All about your customer information
+    externalDocs:
+      description: Find out more
+      url: http://swagger.
 servers:
-  - url: https://api.banco.com/v1
-
+  - url: http://localhost:8080/api/v1
 paths:
-  /clientes:
+  /customers:
     get:
-      summary: Obtener lista de todos los clientes
+      tags:
+        - customers
+      summary: Get list of all clients
       responses:
         '200':
-          description: Lista de clientes
+          description: Client List
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Cliente'
-
-    post:
-      summary: Crear un nuevo cliente
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Cliente'
-      responses:
-        '201':
-          description: Cliente creado
-
-  /clientes/{clienteId}:
-    get:
-      summary: Obtener información de un cliente específico
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Información del cliente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Cliente'
-        '404':
-          description: Cliente no encontrado
-
-  /clientes/{clienteId}/cuentas:
-    get:
-      summary: Obtener cuentas de un cliente
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lista de cuentas del cliente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CuentaBancaria'
-    
-    post:
-      summary: Crear cuenta bancaria para un cliente
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CuentaBancaria'
-      responses:
-        '201':
-          description: Cuenta creada
-
-  /clientes/{clienteId}/creditos:
-    get:
-      summary: Obtener créditos de un cliente
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lista de créditos del cliente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Credito'
-    
-    post:
-      summary: Crear crédito para un cliente
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Credito'
-      responses:
-        '201':
-          description: Crédito creado
-
-  /clientes/{clienteId}/cuentas/{cuentaId}/transacciones:
-    post:
-      summary: Crear una transacción en una cuenta
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: cuentaId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Transaccion'
-      responses:
-        '201':
-          description: Transacción creada
-
-    get:
-      summary: Obtener transacciones de una cuenta
-      parameters:
-        - name: clienteId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: cuentaId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Lista de transacciones
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Transaccion'
-
+                  $ref: '#/components/schemas/Customer'
+        '500':
+          description: Server error          
+                  
 components:
   schemas:
-    Cliente:
+    Customer:
       type: object
       properties:
         id:
           type: string
-          description: ID único del cliente
-        tipoCliente:
+          description: unique client id
+        clientType:
           type: string
-          enum: [personal, empresarial]
-          description: Tipo de cliente
-        nombre:
+          enum: [business, staff]
+          description: Client type
+        name:
           type: string
-          description: Nombre del cliente
-        cuentas:
-          type: array
-          items:
-            $ref: '#/components/schemas/CuentaBancaria'
-        creditos:
-          type: array
-          items:
-            $ref: '#/components/schemas/Credito'
-
-    CuentaBancaria:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID único de la cuenta bancaria
-        tipoCuenta:
-          type: string
-          enum: [ahorro, corriente, plazo_fijo]
-          description: Tipo de cuenta bancaria
-        saldo:
-          type: number
-          format: float
-          description: Saldo disponible en la cuenta
-        movimientosMensuales:
-          type: integer
-          description: Número de movimientos mensuales permitidos (para ahorro y plazo fijo)
-        comision:
-          type: number
-          format: float
-          description: Comisión por mantenimiento (para cuentas corrientes)
-
-    Credito:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID único del crédito
-        tipoCredito:
-          type: string
-          enum: [personal, empresarial, tarjeta_credito]
-          description: Tipo de crédito
-        monto:
-          type: number
-          format: float
-          description: Monto del crédito
-        limiteCredito:
-          type: number
-          format: float
-          description: Límite de crédito para tarjeta de crédito (aplicable solo a tarjeta_credito)
-
-    Transaccion:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID único de la transacción
-        tipoTransaccion:
-          type: string
-          enum: [deposito, retiro, pago, consumo]
-          description: Tipo de transacción realizada
-        monto:
-          type: number
-          format: float
-          description: Monto de la transacción
-        fecha:
-          type: string
-          format: date
-          description: Fecha de la transacción
+          description: Customer name      
+          
