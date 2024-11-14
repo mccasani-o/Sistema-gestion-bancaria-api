@@ -67,7 +67,7 @@ paths:
     put:
       tags:
         - customers
-      summary: Actualizar un cliente
+      summary: Update a client
       parameters:
         - name: id
           in: path
