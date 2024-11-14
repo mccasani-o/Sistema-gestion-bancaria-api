@@ -25,13 +25,87 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Customer'
+                  $ref: '#/components/schemas/CustomerResponse'
         '500':
-          description: Server error          
+          description: Server error 
+    post:
+      tags:
+        - customers
+      summary: Create a new client
+      requestBody:
+        description: Data to create the client
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Client created
+            
+    
+  /customers/{id}:
+    get:
+      tags:
+        - customers
+      summary: Get a customer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Client found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '404':
+          description: Client not found
+    put:
+      tags:
+        - customers
+      summary: Actualizar un cliente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Datos para actualizar el cliente
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '200':
+          description: Updated client
+          
+        '404':
+          description: Client not found  
+          
+    delete:
+      tags:
+        - customers
+      summary: Delete a customer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted customer   
+               
                   
 components:
   schemas:
-    Customer:
+    CustomerResponse:
       type: object
       properties:
         id:
@@ -41,7 +115,44 @@ components:
           type: string
           enum: [business, staff]
           description: Client type
+        documentType:
+          type: string
+          enum: [DNI, CE]
+          description: Document type  
+        documentNumber:
+          type: string
+          description: Document number
         name:
           type: string
-          description: Customer name      
+          description: Names
+        lastName:
+          type: string
+          description: surnames  
+        email:
+          type: string
+          description: Customer emeal
+          
+    CustomerRequest:
+      type: object
+      properties:
+        clientType:
+          type: string
+          enum: [business, staff]
+          description: Client type
+        documentType:
+          type: string
+          enum: [DNI, CE]
+          description: Document type  
+        documentNumber:
+          type: string
+          description: Document number
+        name:
+          type: string
+          description: Names
+        lastName:
+          type: string
+          description: surnames  
+        email:
+          type: string
+          description: Customer emeal        
           
